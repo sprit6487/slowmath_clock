@@ -46,17 +46,17 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100dv
 .brand-sub{font-size:.8rem;color:var(--warm-400);margin-bottom:0;font-weight:500;}
 .share-btn{position:absolute;top:0;right:0;background:#fff;border:2px solid var(--border);border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--warm-500);}
 
-/* Mode Cards */
-.mode-grid{width:100%;display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
-.mode-card{background:#fff;border:2px solid var(--border);border-radius:20px;padding:14px 16px 12px;width:100%;}
-.mode-card-top{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
-.mode-preview-wrap{width:60px;height:60px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
-.mode-info{flex:1;text-align:left;}
-.mode-title{font-size:1rem;font-weight:700;color:var(--warm-700);margin-bottom:2px;}
-.mode-desc{font-size:.72rem;color:var(--warm-400);}
-.mode-btns{display:grid;grid-template-columns:1fr;gap:8px;}
-.mode-btn{flex:1;padding:10px 0;border:2px solid var(--border);border-radius:10px;background:#fff;font-family:inherit;font-size:.85rem;font-weight:700;color:var(--warm-600);cursor:pointer;transition:all .12s;text-align:center;}
-.mode-btn:hover,.mode-btn:active{background:#EEF6FD;border-color:var(--blue);color:var(--blue);}
+/* Clock Type Sections */
+.clock-sections{width:100%;display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+.clock-type-section{width:100%;background:#fff;border:2px solid var(--border);border-radius:20px;padding:16px;}
+.clock-type-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1.5px solid var(--border-light);}
+.clock-type-icon{font-size:1.25rem;line-height:1;}
+.clock-type-title{font-size:1.1rem;font-weight:900;color:var(--warm-700);}
+.sub-mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.sub-mode-btn{display:flex;flex-direction:column;align-items:center;padding:12px 8px 10px;border:2px solid var(--border);border-radius:14px;background:#FDFCFA;cursor:pointer;font-family:inherit;transition:all .12s;gap:6px;width:100%;}
+.sub-mode-btn:hover,.sub-mode-btn:active{background:#EEF6FD;border-color:var(--blue);}
+.sub-preview{height:56px;display:flex;align-items:center;justify-content:center;}
+.sub-mode-label{font-size:.9rem;font-weight:700;color:var(--warm-700);}
 
 /* ── Settings ── */
 .settings-section{width:100%;border-top:1.5px solid var(--border-light);padding-top:16px;margin-top:4px;}
@@ -257,75 +257,55 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100dv
     <p class="brand-sub">시계를 읽는 연습을 해보아요!</p>
   </div>
 
-  <div class="mode-grid" id="mode-grid">
-    <!-- 정시 -->
-    <div class="mode-card">
-      <div class="mode-card-top">
-        <div class="mode-preview-wrap" id="prev-hour"></div>
-        <div class="mode-info">
-          <div class="mode-title">정시 맞추기</div>
-          <div class="mode-desc">N시 정각을 맞혀요</div>
-        </div>
+  <div class="clock-sections">
+    <!-- 전자시계 -->
+    <div class="clock-type-section">
+      <div class="clock-type-header">
+        <span class="clock-type-icon">🔢</span>
+        <span class="clock-type-title">전자시계</span>
       </div>
-      <div class="mode-btns" style="grid-template-columns:1fr 1fr">
-        <button class="mode-btn" onclick="startGame('hour','analog')">🕐 바늘시계</button>
-        <button class="mode-btn" onclick="startGame('hour','digital')">🔢 전자시계</button>
-      </div>
-    </div>
-    <!-- 30분 -->
-    <div class="mode-card">
-      <div class="mode-card-top">
-        <div class="mode-preview-wrap" id="prev-half"></div>
-        <div class="mode-info">
-          <div class="mode-title">30분 맞추기</div>
-          <div class="mode-desc">N시 30분을 맞혀요</div>
-        </div>
-      </div>
-      <div class="mode-btns" style="grid-template-columns:1fr 1fr">
-        <button class="mode-btn" onclick="startGame('half','analog')">🕐 바늘시계</button>
-        <button class="mode-btn" onclick="startGame('half','digital')">🔢 전자시계</button>
+      <div class="sub-mode-grid">
+        <button class="sub-mode-btn" onclick="startGame('hour','digital')">
+          <div class="sub-preview" id="sprev-d-hour"></div>
+          <div class="sub-mode-label">정시 맞추기</div>
+        </button>
+        <button class="sub-mode-btn" onclick="startGame('half','digital')">
+          <div class="sub-preview" id="sprev-d-half"></div>
+          <div class="sub-mode-label">30분 맞추기</div>
+        </button>
+        <button class="sub-mode-btn" onclick="startGame('quarter','digital')">
+          <div class="sub-preview" id="sprev-d-quarter"></div>
+          <div class="sub-mode-label">15분 맞추기</div>
+        </button>
+        <button class="sub-mode-btn" onclick="startGame('three_quarter','digital')">
+          <div class="sub-preview" id="sprev-d-three_quarter"></div>
+          <div class="sub-mode-label">45분 맞추기</div>
+        </button>
       </div>
     </div>
-    <!-- 15분 -->
-    <div class="mode-card">
-      <div class="mode-card-top">
-        <div class="mode-preview-wrap" id="prev-quarter"></div>
-        <div class="mode-info">
-          <div class="mode-title">15분 맞추기</div>
-          <div class="mode-desc">N시 15분을 맞혀요</div>
-        </div>
+    <!-- 바늘시계 -->
+    <div class="clock-type-section">
+      <div class="clock-type-header">
+        <span class="clock-type-icon">🕐</span>
+        <span class="clock-type-title">바늘시계</span>
       </div>
-      <div class="mode-btns" style="grid-template-columns:1fr 1fr">
-        <button class="mode-btn" onclick="startGame('quarter','analog')">🕐 바늘시계</button>
-        <button class="mode-btn" onclick="startGame('quarter','digital')">🔢 전자시계</button>
-      </div>
-    </div>
-    <!-- 45분 -->
-    <div class="mode-card">
-      <div class="mode-card-top">
-        <div class="mode-preview-wrap" id="prev-three_quarter"></div>
-        <div class="mode-info">
-          <div class="mode-title">45분 맞추기</div>
-          <div class="mode-desc">N시 45분을 맞혀요</div>
-        </div>
-      </div>
-      <div class="mode-btns" style="grid-template-columns:1fr 1fr">
-        <button class="mode-btn" onclick="startGame('three_quarter','analog')">🕐 바늘시계</button>
-        <button class="mode-btn" onclick="startGame('three_quarter','digital')">🔢 전자시계</button>
-      </div>
-    </div>
-    <!-- 랜덤 -->
-    <div class="mode-card">
-      <div class="mode-card-top">
-        <div class="mode-preview-wrap" id="prev-random"></div>
-        <div class="mode-info">
-          <div class="mode-title">랜덤 맞추기</div>
-          <div class="mode-desc">정시, 15분, 30분, 45분 혼합</div>
-        </div>
-      </div>
-      <div class="mode-btns" style="grid-template-columns:1fr 1fr">
-        <button class="mode-btn" onclick="startGame('random','analog')">🕐 바늘시계</button>
-        <button class="mode-btn" onclick="startGame('random','digital')">🔢 전자시계</button>
+      <div class="sub-mode-grid">
+        <button class="sub-mode-btn" onclick="startGame('hour','analog')">
+          <div class="sub-preview" id="sprev-a-hour"></div>
+          <div class="sub-mode-label">정시 맞추기</div>
+        </button>
+        <button class="sub-mode-btn" onclick="startGame('half','analog')">
+          <div class="sub-preview" id="sprev-a-half"></div>
+          <div class="sub-mode-label">30분 맞추기</div>
+        </button>
+        <button class="sub-mode-btn" onclick="startGame('quarter','analog')">
+          <div class="sub-preview" id="sprev-a-quarter"></div>
+          <div class="sub-mode-label">15분 맞추기</div>
+        </button>
+        <button class="sub-mode-btn" onclick="startGame('three_quarter','analog')">
+          <div class="sub-preview" id="sprev-a-three_quarter"></div>
+          <div class="sub-mode-label">45분 맞추기</div>
+        </button>
       </div>
     </div>
   </div>
@@ -532,16 +512,12 @@ function digitalClockSVG(h, m, isSmall) {
 
 /* ══ 모드 카드 미리보기 초기화 ══ */
 function initPreviews() {
-  const previews = {
-    'prev-hour':          [3, 0],
-    'prev-half':          [3, 30],
-    'prev-quarter':       [3, 15],
-    'prev-three_quarter': [3, 45],
-    'prev-random':        [7, 30]
-  };
-  for (const [id, [h, m]] of Object.entries(previews)) {
-    const el = document.getElementById(id);
-    if (el) el.innerHTML = clockSVG(h, m, true);
+  const times = { hour:[3,0], half:[3,30], quarter:[3,15], three_quarter:[3,45] };
+  for (const [mode, [h, m]] of Object.entries(times)) {
+    const da = document.getElementById(`sprev-d-${mode}`);
+    if (da) da.innerHTML = digitalClockSVG(h, m, true);
+    const aa = document.getElementById(`sprev-a-${mode}`);
+    if (aa) aa.innerHTML = clockSVG(h, m, true);
   }
 }
 
