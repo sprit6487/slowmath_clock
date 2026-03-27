@@ -50,7 +50,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100dv
 .clock-sections{width:100%;display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
 .clock-type-section{width:100%;background:#fff;border:2px solid var(--border);border-radius:20px;padding:16px;}
 .clock-type-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1.5px solid var(--border-light);}
-.clock-type-icon{display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.clock-type-icon{font-size:1.25rem;line-height:1;}
 .clock-type-title{font-size:1.1rem;font-weight:900;color:var(--warm-700);}
 .sub-mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .sub-mode-btn{display:flex;flex-direction:column;align-items:center;padding:12px 8px 10px;border:2px solid var(--border);border-radius:14px;background:#FDFCFA;cursor:pointer;font-family:inherit;transition:all .12s;gap:6px;width:100%;}
@@ -261,7 +261,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100dv
     <!-- 전자시계 -->
     <div class="clock-type-section">
       <div class="clock-type-header">
-        <span class="clock-type-icon" id="header-icon-digital"></span>
+        <span class="clock-type-icon">🔢</span>
         <span class="clock-type-title">전자시계</span>
       </div>
       <div class="sub-mode-grid">
@@ -286,7 +286,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100dv
     <!-- 바늘시계 -->
     <div class="clock-type-section">
       <div class="clock-type-header">
-        <span class="clock-type-icon" id="header-icon-analog"></span>
+        <span class="clock-type-icon">🕐</span>
         <span class="clock-type-title">바늘시계</span>
       </div>
       <div class="sub-mode-grid">
