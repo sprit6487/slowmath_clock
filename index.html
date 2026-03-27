@@ -50,7 +50,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100dv
 .clock-sections{width:100%;display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
 .clock-type-section{width:100%;background:#fff;border:2px solid var(--border);border-radius:20px;padding:16px;}
 .clock-type-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1.5px solid var(--border-light);}
-.clock-type-icon{font-size:1.25rem;line-height:1;}
+.clock-type-icon{display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .clock-type-title{font-size:1.1rem;font-weight:900;color:var(--warm-700);}
 .sub-mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .sub-mode-btn{display:flex;flex-direction:column;align-items:center;padding:12px 8px 10px;border:2px solid var(--border);border-radius:14px;background:#FDFCFA;cursor:pointer;font-family:inherit;transition:all .12s;gap:6px;width:100%;}
@@ -261,7 +261,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100dv
     <!-- 전자시계 -->
     <div class="clock-type-section">
       <div class="clock-type-header">
-        <span class="clock-type-icon">🔢</span>
+        <span class="clock-type-icon" id="header-icon-digital"></span>
         <span class="clock-type-title">전자시계</span>
       </div>
       <div class="sub-mode-grid">
@@ -286,7 +286,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100dv
     <!-- 바늘시계 -->
     <div class="clock-type-section">
       <div class="clock-type-header">
-        <span class="clock-type-icon">🕐</span>
+        <span class="clock-type-icon" id="header-icon-analog"></span>
         <span class="clock-type-title">바늘시계</span>
       </div>
       <div class="sub-mode-grid">
@@ -424,8 +424,8 @@ function clockHand(cx, cy, angleDeg, len, backLen, width, color) {
   return `<polygon points="${tx},${ty} ${l1x},${l1y} ${bx},${by} ${l2x},${l2y}" fill="${color}" opacity="0.95"/>`;
 }
 
-function clockSVG(h, m, isSmall) {
-  const sz = isSmall ? 56 : 220;
+function clockSVG(h, m, isSmall, customSz) {
+  const sz = customSz !== undefined ? customSz : (isSmall ? 56 : 220);
   const cx = sz / 2, cy = sz / 2;
   const R = sz / 2 - (isSmall ? 1 : 2);
   const fR = R - (isSmall ? 4 : 10);
@@ -492,6 +492,31 @@ function formatDigital(h, m) {
   return `${h}:${String(m).padStart(2, '0')}`;
 }
 
+/* ══ 전자 알람시계 아이콘 SVG (헤더용) ══ */
+function digitalAlarmSVG(h, m) {
+  const txt = formatDigital(h, m);
+  return `<svg viewBox="0 0 80 62" width="68" height="53" xmlns="http://www.w3.org/2000/svg">
+  <rect x="5" y="11" width="70" height="44" rx="8" fill="rgba(0,0,0,0.10)"/>
+  <rect x="4" y="9" width="70" height="44" rx="8" fill="#4A4035"/>
+  <rect x="7" y="10" width="64" height="9" rx="5" fill="white" opacity="0.07"/>
+  <rect x="10" y="15" width="60" height="28" rx="5" fill="#1A1410"/>
+  <rect x="13" y="18" width="54" height="22" rx="3" fill="#98E6A0"/>
+  <rect x="14" y="19" width="26" height="5" rx="2" fill="white" opacity="0.18"/>
+  <text x="40" y="29.5" text-anchor="middle" dominant-baseline="central"
+        font-family="'Courier New',monospace" font-size="16" font-weight="900"
+        fill="#0C3B18" letter-spacing="3">${txt}</text>
+  <circle cx="16" cy="8" r="6.5" fill="#3A3028" stroke="#2A2018" stroke-width="1"/>
+  <circle cx="16" cy="8" r="3" fill="#2A2018"/>
+  <path d="M12 5.5 Q16 2.5 20 5.5" fill="none" stroke="#5A5040" stroke-width="1.5" stroke-linecap="round"/>
+  <circle cx="64" cy="8" r="6.5" fill="#3A3028" stroke="#2A2018" stroke-width="1"/>
+  <circle cx="64" cy="8" r="3" fill="#2A2018"/>
+  <path d="M60 5.5 Q64 2.5 68 5.5" fill="none" stroke="#5A5040" stroke-width="1.5" stroke-linecap="round"/>
+  <rect x="28" y="5" width="24" height="7" rx="3.5" fill="#3A3028" stroke="#2A2018" stroke-width="0.5"/>
+  <rect x="11" y="51" width="18" height="9" rx="4.5" fill="#3A3028"/>
+  <rect x="51" y="51" width="18" height="9" rx="4.5" fill="#3A3028"/>
+</svg>`;
+}
+
 /* ══ 전자 시계 SVG ══ */
 function digitalClockSVG(h, m, isSmall) {
   const txt = formatDigital(h, m);
@@ -512,13 +537,58 @@ function digitalClockSVG(h, m, isSmall) {
 
 /* ══ 모드 카드 미리보기 초기화 ══ */
 function initPreviews() {
-  const times = { hour:[3,0], half:[3,30], quarter:[3,15], three_quarter:[3,45] };
+  const times = { hour:[1,0], half:[1,30], quarter:[1,15], three_quarter:[1,45] };
   for (const [mode, [h, m]] of Object.entries(times)) {
     const da = document.getElementById(`sprev-d-${mode}`);
     if (da) da.innerHTML = digitalClockSVG(h, m, true);
     const aa = document.getElementById(`sprev-a-${mode}`);
     if (aa) aa.innerHTML = clockSVG(h, m, true);
   }
+}
+
+/* ══ 바늘시계 헤더 아이콘 SVG (100×100 뷰박스, 비율 최적화) ══ */
+function clockIconSVG(h, m) {
+  const cx = 50, cy = 50;
+  const hAng = ((h % 12) * 60 + m) / 720 * 360 - 90;
+  const mAng = m / 60 * 360 - 90;
+  let ticks = '';
+  for (let i = 0; i < 12; i++) {
+    const a = (i * 30 - 90) * Math.PI / 180;
+    const r1 = i % 3 === 0 ? 35 : 38;
+    ticks += `<line x1="${(cx+Math.cos(a)*r1).toFixed(1)}" y1="${(cy+Math.sin(a)*r1).toFixed(1)}" x2="${(cx+Math.cos(a)*41).toFixed(1)}" y2="${(cy+Math.sin(a)*41).toFixed(1)}" stroke="${i%3===0?'#666':'#C0C0C0'}" stroke-width="${i%3===0?2.5:1.2}" stroke-linecap="round"/>`;
+  }
+  let nums = '';
+  for (let i = 1; i <= 12; i++) {
+    const a = (i * 30 - 90) * Math.PI / 180;
+    nums += `<text x="${(cx+Math.cos(a)*29).toFixed(1)}" y="${(cy+Math.sin(a)*29).toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="700" fill="#333" font-family="'Noto Sans KR',sans-serif">${i}</text>`;
+  }
+  function hand(ang, len, back, w, col) {
+    const a = ang * Math.PI / 180, p = a + Math.PI / 2, hw = w / 2;
+    const f = n => n.toFixed(2);
+    const tx=cx+Math.cos(a)*len, ty=cy+Math.sin(a)*len;
+    const bx=cx-Math.cos(a)*back, by=cy-Math.sin(a)*back;
+    const l1x=cx+Math.cos(p)*hw, l1y=cy+Math.sin(p)*hw;
+    const l2x=cx-Math.cos(p)*hw, l2y=cy-Math.sin(p)*hw;
+    return `<polygon points="${f(tx)},${f(ty)} ${f(l1x)},${f(l1y)} ${f(bx)},${f(by)} ${f(l2x)},${f(l2y)}" fill="${col}" opacity="0.95"/>`;
+  }
+  return `<svg viewBox="0 0 100 100" width="56" height="56" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="50" cy="50" r="49" fill="#A8D8EE"/>
+  <circle cx="50" cy="50" r="43" fill="white"/>
+  <circle cx="50" cy="50" r="43" fill="none" stroke="#6BADE8" stroke-width="2"/>
+  ${ticks}${nums}
+  ${hand(mAng,34,4,2.5,'#E05050')}
+  ${hand(hAng,22,5,4,'#3A9B6A')}
+  <circle cx="50" cy="50" r="4" fill="#6BADE8"/>
+  <circle cx="50" cy="50" r="1.8" fill="white"/>
+</svg>`;
+}
+
+/* ══ 섹션 헤더 아이콘 초기화 ══ */
+function initHeaderIcons() {
+  const dig = document.getElementById('header-icon-digital');
+  if (dig) dig.innerHTML = digitalAlarmSVG(3, 0);
+  const ana = document.getElementById('header-icon-analog');
+  if (ana) ana.innerHTML = clockIconSVG(10, 10);
 }
 
 /* ══ 문제 생성 ══ */
@@ -792,6 +862,7 @@ function speak(text) {
   loadSettings();
   applySettingsUI();
   initPreviews();
+  initHeaderIcons();
 
   const splash = document.getElementById('splash');
   setTimeout(() => {
