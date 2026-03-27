@@ -105,8 +105,8 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100dv
 .item-card.card-wrong{border-color:#F07070!important;background:#FDE8E8!important;opacity:.6;}
 .item-card.card-locked{pointer-events:none;}
 .time-label{font-size:1.25rem;font-weight:900;color:var(--warm-700);text-align:center;line-height:1.3;}
-.item-card.clock-choice{padding:8px 4px;}
-.item-card.digital-choice{padding:10px 6px;}
+.item-card.clock-choice{padding:6px 4px;}
+.item-card.digital-choice{padding:14px 8px;}
 .mode-section-label{font-size:.875rem;font-weight:700;color:var(--warm-500);width:100%;text-align:left;padding:4px 0 8px;border-top:1.5px solid var(--border-light);margin-top:6px;}
 
 .feedback{font-size:1rem;font-weight:700;text-align:center;padding:8px 0;min-height:38px;}
@@ -422,7 +422,7 @@ const MODE_MINUTES = {
   quarter:       [15],
   three_quarter: [45],
   random:        [0, 15, 30, 45],
-  cross_d2a:     [0, 15, 30, 45],
+  cross_d2a:     [0, 15, 30, 45],  // 문제는 랜덤 분, 선지는 같은 분·다른 시
   cross_a2d:     [0, 15, 30, 45]
 };
 
@@ -540,6 +540,16 @@ function digitalAlarmSVG(h, m) {
 </svg>`;
 }
 
+/* ══ 전자시계 선택지 SVG (cross_a2d 보기용, 중간 크기) ══ */
+function digitalChoiceSVG(h, m) {
+  const txt = formatDigital(h, m);
+  return `<svg viewBox="0 0 110 46" width="110" height="46" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="110" height="46" rx="8" fill="#3DA858"/>
+  <rect x="5" y="5" width="100" height="36" rx="5" fill="white"/>
+  <text x="55" y="23" text-anchor="middle" dominant-baseline="central" font-size="22" font-weight="900" font-family="monospace,'Courier New',sans-serif" fill="#1A1A1A" letter-spacing="3">${txt}</text>
+</svg>`;
+}
+
 /* ══ 전자 시계 SVG ══ */
 function digitalClockSVG(h, m, isSmall) {
   const txt = formatDigital(h, m);
@@ -646,7 +656,7 @@ function buildQuestions(mode) {
       Array.from({length: 12}, (_, i) => i + 1).filter(x => x !== h)
     );
     let choices;
-    if (mode === 'random' || mode === 'cross_d2a' || mode === 'cross_a2d') {
+    if (mode === 'random') {
       /* Random mode: vary minutes too */
       const usedC = new Set([key]);
       choices = [{h, m}];
@@ -792,7 +802,7 @@ function renderQ() {
     document.getElementById('scene-area').innerHTML = digitalClockSVG(q.h, q.m, false);
     row.innerHTML = q.choices.map((c, i) =>
       `<div class="item-card clock-choice" id="card-${i}" onclick="selectCard(${i})">
-        ${clockSVG(c.h, c.m, true)}
+        ${clockSVG(c.h, c.m, true, 110)}
       </div>`
     ).join('');
   } else if (curMode === 'cross_a2d') {
@@ -800,7 +810,7 @@ function renderQ() {
     document.getElementById('scene-area').innerHTML = clockSVG(q.h, q.m, false);
     row.innerHTML = q.choices.map((c, i) =>
       `<div class="item-card digital-choice" id="card-${i}" onclick="selectCard(${i})">
-        ${digitalClockSVG(c.h, c.m, true)}
+        ${digitalChoiceSVG(c.h, c.m)}
       </div>`
     ).join('');
   } else {
