@@ -105,6 +105,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100dv
 .item-card.card-wrong{border-color:#F07070!important;background:#FDE8E8!important;opacity:.6;}
 .item-card.card-locked{pointer-events:none;}
 .time-label{font-size:1.25rem;font-weight:900;color:var(--warm-700);text-align:center;line-height:1.3;}
+.mode-section-label{font-size:.875rem;font-weight:700;color:var(--warm-500);width:100%;text-align:left;padding:4px 0 8px;border-top:1.5px solid var(--border-light);margin-top:6px;}
 
 .feedback{font-size:1rem;font-weight:700;text-align:center;padding:8px 0;min-height:38px;}
 .feedback.correct{color:#5BC886;}
@@ -266,8 +267,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100dv
           <div class="mode-desc">N시 정각을 맞혀요</div>
         </div>
       </div>
-      <div class="mode-btns">
-        <button class="mode-btn" onclick="startGame('hour')">시작하기</button>
+      <div class="mode-btns" style="grid-template-columns:1fr 1fr">
+        <button class="mode-btn" onclick="startGame('hour','analog')">🕐 바늘시계</button>
+        <button class="mode-btn" onclick="startGame('hour','digital')">🔢 전자시계</button>
       </div>
     </div>
     <!-- 30분 -->
@@ -279,8 +281,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100dv
           <div class="mode-desc">N시 30분을 맞혀요</div>
         </div>
       </div>
-      <div class="mode-btns">
-        <button class="mode-btn" onclick="startGame('half')">시작하기</button>
+      <div class="mode-btns" style="grid-template-columns:1fr 1fr">
+        <button class="mode-btn" onclick="startGame('half','analog')">🕐 바늘시계</button>
+        <button class="mode-btn" onclick="startGame('half','digital')">🔢 전자시계</button>
       </div>
     </div>
     <!-- 15분 -->
@@ -292,8 +295,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100dv
           <div class="mode-desc">N시 15분을 맞혀요</div>
         </div>
       </div>
-      <div class="mode-btns">
-        <button class="mode-btn" onclick="startGame('quarter')">시작하기</button>
+      <div class="mode-btns" style="grid-template-columns:1fr 1fr">
+        <button class="mode-btn" onclick="startGame('quarter','analog')">🕐 바늘시계</button>
+        <button class="mode-btn" onclick="startGame('quarter','digital')">🔢 전자시계</button>
       </div>
     </div>
     <!-- 45분 -->
@@ -305,8 +309,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100dv
           <div class="mode-desc">N시 45분을 맞혀요</div>
         </div>
       </div>
-      <div class="mode-btns">
-        <button class="mode-btn" onclick="startGame('three_quarter')">시작하기</button>
+      <div class="mode-btns" style="grid-template-columns:1fr 1fr">
+        <button class="mode-btn" onclick="startGame('three_quarter','analog')">🕐 바늘시계</button>
+        <button class="mode-btn" onclick="startGame('three_quarter','digital')">🔢 전자시계</button>
       </div>
     </div>
     <!-- 랜덤 -->
@@ -318,11 +323,13 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100dv
           <div class="mode-desc">정시, 15분, 30분, 45분 혼합</div>
         </div>
       </div>
-      <div class="mode-btns">
-        <button class="mode-btn" onclick="startGame('random')">시작하기</button>
+      <div class="mode-btns" style="grid-template-columns:1fr 1fr">
+        <button class="mode-btn" onclick="startGame('random','analog')">🕐 바늘시계</button>
+        <button class="mode-btn" onclick="startGame('random','digital')">🔢 전자시계</button>
       </div>
     </div>
   </div>
+
 
   <!-- 설정 -->
   <div class="settings-section">
@@ -417,7 +424,7 @@ const MODE_MINUTES = {
 };
 
 /* ══ 상태 ══ */
-let curMode, curQuestions, qIdx, score, curQ, locked;
+let curMode, curDisplayType, curQuestions, qIdx, score, curQ, locked;
 let ttsOn = true, impulsePrevention = true, impulseMode = 'hide', impulseDelay = 5;
 let delayTimer = null;
 
@@ -500,6 +507,27 @@ function clockSVG(h, m, isSmall) {
 function formatTime(h, m) {
   if (m === 0) return `${h}시`;
   return `${h}시 ${m}분`;
+}
+function formatDigital(h, m) {
+  return `${h}:${String(m).padStart(2, '0')}`;
+}
+
+/* ══ 전자 시계 SVG ══ */
+function digitalClockSVG(h, m, isSmall) {
+  const txt = formatDigital(h, m);
+  if (isSmall) {
+    return `<svg viewBox="0 0 64 30" width="64" height="30" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="64" height="30" rx="6" fill="#3DA858"/>
+  <rect x="5" y="4" width="54" height="22" rx="4" fill="white"/>
+  <text x="32" y="15" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="900" font-family="monospace,'Courier New',sans-serif" fill="#1A1A1A" letter-spacing="1">${txt}</text>
+</svg>`;
+  } else {
+    return `<svg viewBox="0 0 260 108" width="100%" style="max-width:260px;max-height:108px;" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="260" height="108" rx="14" fill="#3DA858"/>
+  <rect x="10" y="10" width="240" height="88" rx="10" fill="white"/>
+  <text x="130" y="54" text-anchor="middle" dominant-baseline="central" font-size="58" font-weight="900" font-family="monospace,'Courier New',sans-serif" fill="#1A1A1A" letter-spacing="4">${txt}</text>
+</svg>`;
+  }
 }
 
 /* ══ 모드 카드 미리보기 초기화 ══ */
@@ -660,8 +688,9 @@ function shareApp() {
 }
 
 /* ══ 게임 시작 ══ */
-function startGame(mode) {
+function startGame(mode, displayType) {
   curMode = mode;
+  curDisplayType = displayType || 'analog';
   curQuestions = buildQuestions(mode);
   qIdx = 0;
   score = 0;
@@ -684,7 +713,9 @@ function renderQ() {
   document.getElementById('impulse-area').innerHTML = '';
 
   document.getElementById('question-prompt').textContent = '몇 시 몇 분일까요?';
-  document.getElementById('scene-area').innerHTML = clockSVG(q.h, q.m, false);
+  document.getElementById('scene-area').innerHTML = curDisplayType === 'digital'
+    ? digitalClockSVG(q.h, q.m, false)
+    : clockSVG(q.h, q.m, false);
 
   const row = document.getElementById('compare-row');
   row.innerHTML = q.choices.map((c, i) =>
