@@ -105,7 +105,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100dv
 .item-card.card-wrong{border-color:#F07070!important;background:#FDE8E8!important;opacity:.6;}
 .item-card.card-locked{pointer-events:none;}
 .time-label{font-size:1.25rem;font-weight:900;color:var(--warm-700);text-align:center;line-height:1.3;}
-.item-card.clock-choice{padding:6px 4px;}
+.item-card.clock-choice{padding:6px 4px;}.item-card.clock-choice svg{width:110px!important;height:110px!important;}
 .item-card.digital-choice{padding:14px 8px;}
 .mode-section-label{font-size:.875rem;font-weight:700;color:var(--warm-500);width:100%;text-align:left;padding:4px 0 8px;border-top:1.5px solid var(--border-light);margin-top:6px;}
 
@@ -329,7 +329,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100dv
         </button>
       </div>
     </div>
-  </div>
 
 
   <!-- 설정 -->
@@ -802,7 +801,7 @@ function renderQ() {
     document.getElementById('scene-area').innerHTML = digitalClockSVG(q.h, q.m, false);
     row.innerHTML = q.choices.map((c, i) =>
       `<div class="item-card clock-choice" id="card-${i}" onclick="selectCard(${i})">
-        ${clockSVG(c.h, c.m, true, 110)}
+        ${clockSVG(c.h, c.m, false)}
       </div>`
     ).join('');
   } else if (curMode === 'cross_a2d') {
