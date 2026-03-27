@@ -105,6 +105,8 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100dv
 .item-card.card-wrong{border-color:#F07070!important;background:#FDE8E8!important;opacity:.6;}
 .item-card.card-locked{pointer-events:none;}
 .time-label{font-size:1.25rem;font-weight:900;color:var(--warm-700);text-align:center;line-height:1.3;}
+.item-card.clock-choice{padding:8px 4px;}
+.item-card.digital-choice{padding:10px 6px;}
 .mode-section-label{font-size:.875rem;font-weight:700;color:var(--warm-500);width:100%;text-align:left;padding:4px 0 8px;border-top:1.5px solid var(--border-light);margin-top:6px;}
 
 .feedback{font-size:1rem;font-weight:700;text-align:center;padding:8px 0;min-height:38px;}
@@ -310,6 +312,25 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100dv
     </div>
   </div>
 
+    <!-- 전자 ↔ 바늘 매칭 -->
+    <div class="clock-type-section">
+      <div class="clock-type-header">
+        <span class="clock-type-icon">🔄</span>
+        <span class="clock-type-title">전자 ↔ 바늘 매칭</span>
+      </div>
+      <div class="sub-mode-grid">
+        <button class="sub-mode-btn" onclick="startGame('cross_d2a')">
+          <div class="sub-preview" id="sprev-cross-d2a"></div>
+          <div class="sub-mode-label">전자→바늘</div>
+        </button>
+        <button class="sub-mode-btn" onclick="startGame('cross_a2d')">
+          <div class="sub-preview" id="sprev-cross-a2d"></div>
+          <div class="sub-mode-label">바늘→전자</div>
+        </button>
+      </div>
+    </div>
+  </div>
+
 
   <!-- 설정 -->
   <div class="settings-section">
@@ -400,7 +421,9 @@ const MODE_MINUTES = {
   half:          [30],
   quarter:       [15],
   three_quarter: [45],
-  random:        [0, 15, 30, 45]
+  random:        [0, 15, 30, 45],
+  cross_d2a:     [0, 15, 30, 45],
+  cross_a2d:     [0, 15, 30, 45]
 };
 
 /* ══ 상태 ══ */
@@ -544,6 +567,10 @@ function initPreviews() {
     const aa = document.getElementById(`sprev-a-${mode}`);
     if (aa) aa.innerHTML = clockSVG(h, m, true);
   }
+  const cd2a = document.getElementById('sprev-cross-d2a');
+  if (cd2a) cd2a.innerHTML = digitalClockSVG(1, 0, true);
+  const ca2d = document.getElementById('sprev-cross-a2d');
+  if (ca2d) ca2d.innerHTML = clockSVG(1, 0, true);
 }
 
 /* ══ 바늘시계 헤더 아이콘 SVG (100×100 뷰박스, 비율 최적화) ══ */
@@ -619,7 +646,7 @@ function buildQuestions(mode) {
       Array.from({length: 12}, (_, i) => i + 1).filter(x => x !== h)
     );
     let choices;
-    if (mode === 'random') {
+    if (mode === 'random' || mode === 'cross_d2a' || mode === 'cross_a2d') {
       /* Random mode: vary minutes too */
       const usedC = new Set([key]);
       choices = [{h, m}];
@@ -758,17 +785,35 @@ function renderQ() {
   document.getElementById('next-q-btn').classList.add('hidden');
   document.getElementById('impulse-area').innerHTML = '';
 
-  document.getElementById('question-prompt').textContent = '몇 시 몇 분일까요?';
-  document.getElementById('scene-area').innerHTML = curDisplayType === 'digital'
-    ? digitalClockSVG(q.h, q.m, false)
-    : clockSVG(q.h, q.m, false);
-
   const row = document.getElementById('compare-row');
-  row.innerHTML = q.choices.map((c, i) =>
-    `<div class="item-card" id="card-${i}" onclick="selectCard(${i})">
-      <span class="time-label">${formatTime(c.h, c.m)}</span>
-    </div>`
-  ).join('');
+
+  if (curMode === 'cross_d2a') {
+    document.getElementById('question-prompt').textContent = '같은 시간의 바늘시계는?';
+    document.getElementById('scene-area').innerHTML = digitalClockSVG(q.h, q.m, false);
+    row.innerHTML = q.choices.map((c, i) =>
+      `<div class="item-card clock-choice" id="card-${i}" onclick="selectCard(${i})">
+        ${clockSVG(c.h, c.m, true)}
+      </div>`
+    ).join('');
+  } else if (curMode === 'cross_a2d') {
+    document.getElementById('question-prompt').textContent = '같은 시간의 전자시계는?';
+    document.getElementById('scene-area').innerHTML = clockSVG(q.h, q.m, false);
+    row.innerHTML = q.choices.map((c, i) =>
+      `<div class="item-card digital-choice" id="card-${i}" onclick="selectCard(${i})">
+        ${digitalClockSVG(c.h, c.m, true)}
+      </div>`
+    ).join('');
+  } else {
+    document.getElementById('question-prompt').textContent = '몇 시 몇 분일까요?';
+    document.getElementById('scene-area').innerHTML = curDisplayType === 'digital'
+      ? digitalClockSVG(q.h, q.m, false)
+      : clockSVG(q.h, q.m, false);
+    row.innerHTML = q.choices.map((c, i) =>
+      `<div class="item-card" id="card-${i}" onclick="selectCard(${i})">
+        <span class="time-label">${formatTime(c.h, c.m)}</span>
+      </div>`
+    ).join('');
+  }
   row.style.visibility = 'visible';
 
   if (impulsePrevention) applyImpulse();
