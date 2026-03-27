@@ -52,8 +52,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100dv
 .clock-type-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1.5px solid var(--border-light);}
 .clock-type-icon{display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .clock-type-title{font-size:1.1rem;font-weight:900;color:var(--warm-700);}
-#header-icon-digital svg{height:30px!important;width:auto!important;}
-#header-icon-analog svg{height:40px!important;width:auto!important;}
 .sub-mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .sub-mode-btn{display:flex;flex-direction:column;align-items:center;padding:12px 8px 10px;border:2px solid var(--border);border-radius:14px;background:#FDFCFA;cursor:pointer;font-family:inherit;transition:all .12s;gap:6px;width:100%;}
 .sub-mode-btn:hover,.sub-mode-btn:active{background:#EEF6FD;border-color:var(--blue);}
@@ -588,9 +586,9 @@ function clockIconSVG(h, m) {
 /* ══ 섹션 헤더 아이콘 초기화 ══ */
 function initHeaderIcons() {
   const dig = document.getElementById('header-icon-digital');
-  if (dig) dig.innerHTML = digitalClockSVG(1, 0, true);
+  if (dig) dig.innerHTML = digitalAlarmSVG(3, 0);
   const ana = document.getElementById('header-icon-analog');
-  if (ana) ana.innerHTML = clockSVG(1, 0, true);
+  if (ana) ana.innerHTML = clockIconSVG(10, 10);
 }
 
 /* ══ 문제 생성 ══ */
